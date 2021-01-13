@@ -1679,13 +1679,13 @@ public class ScoringServiceImpl implements ScoringService {
 											vehicleOperatorDetail.getIsCurrentlyVehicleOperated() &&
 											!CommonUtils.isObjectNullOrEmpty(vehicleOperatorDetail.getIsAnyVehicleLoan()) && vehicleOperatorDetail.getIsAnyVehicleLoan()) {
 										Double totalSanction=pastVehicleLoanDetailRepository.getTotalSanctionAmount(applicationId,true);
-										scoringParameterRequest.setTotalCostOfProposedVehicleVal(vehicleOperatorDetail.getTotalCostOfProposedVehicle()!=null?vehicleOperatorDetail.getTotalCostOfProposedVehicle():0.0);
+										Double totalCost=currentOperatedVehicleDetailRepository.getTotalCostOfExistingVehicle(applicationId);
 										scoringParameterRequest.setTotalSanctionVal(totalSanction!=null?totalSanction:0.0);
 										//Double result1=vehicleOperatorDetail.getTotalCostOfProposedVehicle()/totalSanction;
 										//scoringParameterRequest.setLoanFreeVehicleVal(result1);
 										scoringParameterRequest.setLoanFreeVehicle_p(true);
 										if ((CommonUtils.isObjectNullOrEmpty(totalSanction) || totalSanction <= 0.0)
-												&& (CommonUtils.isObjectNullOrEmpty(scoringParameterRequest.getTotalCostOfProposedVehicleVal()) || scoringParameterRequest.getTotalCostOfProposedVehicleVal() <= 0.0)) {
+												&& (CommonUtils.isObjectNullOrEmpty(scoringParameterRequest.getTotalCostOfExistingVehicleVal()) || scoringParameterRequest.getTotalCostOfExistingVehicleVal() <= 0.0)) {
 											scoringParameterRequest.setLoanFreeVehicle_p(false);
 										}
 									}else {

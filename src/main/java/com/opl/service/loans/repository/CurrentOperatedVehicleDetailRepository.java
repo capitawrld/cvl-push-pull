@@ -19,5 +19,8 @@ public interface CurrentOperatedVehicleDetailRepository extends JpaRepository<Cu
 	public void deleteByApplicationId(@Param("applicationId") Long applicationId);
 	
 	List<CurrentOperatedVehicleDetail> findByApplicationIdAndIsActive(Long applicationId, Boolean isActive);
+
+	@Query("select sum(vehicleCost) FROM CurrentOperatedVehicleDetail lm where lm.applicationId =:applicationId and isActive=true")
+	public Double getTotalCostOfExistingVehicle(@Param("applicationId") Long applicationId);
 	
 }
