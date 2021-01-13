@@ -1680,6 +1680,7 @@ public class ScoringServiceImpl implements ScoringService {
 											!CommonUtils.isObjectNullOrEmpty(vehicleOperatorDetail.getIsAnyVehicleLoan()) && vehicleOperatorDetail.getIsAnyVehicleLoan()) {
 										Double totalSanction=pastVehicleLoanDetailRepository.getTotalSanctionAmount(applicationId,true);
 										Double totalCost=currentOperatedVehicleDetailRepository.getTotalCostOfExistingVehicle(applicationId);
+										scoringParameterRequest.setTotalCostOfExistingVehicleVal(totalCost!=null?totalCost:0.0);
 										scoringParameterRequest.setTotalSanctionVal(totalSanction!=null?totalSanction:0.0);
 										//Double result1=vehicleOperatorDetail.getTotalCostOfProposedVehicle()/totalSanction;
 										//scoringParameterRequest.setLoanFreeVehicleVal(result1);
