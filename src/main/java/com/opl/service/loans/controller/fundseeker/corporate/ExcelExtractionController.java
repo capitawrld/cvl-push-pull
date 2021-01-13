@@ -59,11 +59,11 @@ public class ExcelExtractionController {
 	private static final Logger logger = LoggerFactory.getLogger(ExcelExtractionController.class);
 	
 
-	@RequestMapping(value = "/ping", method = RequestMethod.GET)
-	public String getPing() {
-		
-		return "Welcome to Excel Extration Service...";
-	}
+//	@RequestMapping(value = "/ping", method = RequestMethod.GET)
+//	public String getPing() {
+//		
+//		return "Welcome to Excel Extration Service...";
+//	}
 
 	@RequestMapping(value = "/read_cma", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<ExcelResponse> readCMA(@RequestBody ExcelRequest excelRequest) {
