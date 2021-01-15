@@ -17,6 +17,7 @@ import java.util.Map;
 
 import com.opl.api.pennydrop.model.CommonResponse;
 import com.opl.cvl.enums.cvl.VehicleBuildType;
+import com.opl.cvl.enums.cvl.VehicleCarryType;
 import com.opl.cvl.enums.cvl.VehicleModelType;
 import com.opl.cvl.enums.cvl.VehicleSegment;
 import com.opl.cvl.enums.cvl.VehicleType;
@@ -339,6 +340,10 @@ public class CorporatePrimaryViewServiceImpl implements CorporatePrimaryViewServ
 				}
 			}
 
+			if(vehicleOperatorRequest.getVehicleCapacity() != null) {
+				vehicleOperatorRequest.setVehicleCapacityStr(VehicleCarryType.getById(vehicleOperatorRequest.getVehicleCapacity()).getValue());
+			}
+			
 			corporatePrimaryViewResponse.setVehicleOperatorDetailsResponse(vehicleOperatorRequest);
 		}
 
