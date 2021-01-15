@@ -17,6 +17,7 @@ import java.util.Map;
 
 import com.opl.api.pennydrop.model.CommonResponse;
 import com.opl.cvl.enums.cvl.VehicleBuildType;
+import com.opl.cvl.enums.cvl.VehicleCarryType;
 import com.opl.cvl.enums.cvl.VehicleModelType;
 import com.opl.cvl.enums.cvl.VehicleSegment;
 import com.opl.cvl.enums.cvl.VehicleType;
@@ -311,7 +312,9 @@ public class CorporatePrimaryViewServiceImpl implements CorporatePrimaryViewServ
 		// Vehicle Operator Code starts here
 
 		VehicleOperatorRequest vehicleOperatorRequest = vehicleOperatorService.getByApplicationId(applicationId);
-
+		
+		vehicleOperatorRequest.setVehicleCarryType(vehicleOperatorRequest.getVehicleCapacity() == 1 ? "Person": "Load");
+		
 		if (!CommonUtils.isObjectNullOrEmpty(vehicleOperatorRequest)){
 			List<Object[]> cityState = commonRepository.getStateAndCityNameById(vehicleOperatorRequest.getState(), vehicleOperatorRequest.getCity());
 			if(cityState != null) {
