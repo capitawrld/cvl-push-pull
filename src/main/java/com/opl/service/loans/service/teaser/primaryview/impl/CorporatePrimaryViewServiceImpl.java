@@ -342,6 +342,10 @@ public class CorporatePrimaryViewServiceImpl implements CorporatePrimaryViewServ
 				}
 			}
 
+			if(vehicleOperatorRequest.getVehicleCapacity() != null) {
+				vehicleOperatorRequest.setVehicleCapacityStr(VehicleCarryType.getById(vehicleOperatorRequest.getVehicleCapacity()).getValue());
+			}
+			
 			corporatePrimaryViewResponse.setVehicleOperatorDetailsResponse(vehicleOperatorRequest);
 		}
 
