@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import com.opl.cvl.enums.cvl.VehicleBuildType;
+import com.opl.cvl.enums.cvl.VehicleCarryType;
 import com.opl.cvl.enums.cvl.VehicleModelType;
 import com.opl.cvl.enums.cvl.VehicleSegment;
 import com.opl.cvl.enums.cvl.VehicleType;
@@ -3256,6 +3257,10 @@ public class CamReportPdfDetailsServiceImpl implements CamReportPdfDetailsServic
 
 			map.put("vehicleOperateIn", vehicleOperatorRequest.getVehicleOperateIn().toString().replaceAll("[\\[\\]]", ""));
 
+			if(vehicleOperatorRequest.getVehicleCapacity() != null) {
+				vehicleOperatorRequest.setVehicleCarryType(VehicleCarryType.getById(vehicleOperatorRequest.getVehicleCapacity()).getValue());
+			}
+			
 			map.put("vehicleOperatorDetails", vehicleOperatorRequest);
 		}
 
