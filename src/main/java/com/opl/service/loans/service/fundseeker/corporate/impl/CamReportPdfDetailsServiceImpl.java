@@ -3014,7 +3014,7 @@ public class CamReportPdfDetailsServiceImpl implements CamReportPdfDetailsServic
 						if(corporateApplicantDetail != null) {
 							map.put("castCategory", corporateApplicantDetail.getCastCategory() != null ? corporateApplicantDetail.getCastCategory() : "-");
 							map.put("minorityCastCategory", corporateApplicantDetail.getMinorCastCategory());
-							map.put("noOfWorker", corporateApplicantDetail.getEmploymentGeneration() != null ? NoOfEmployees.getById(corporateApplicantDetail.getEmploymentGeneration()).getValue() : "-");
+							map.put("noOfWorker", corporateApplicantDetail.getEmploymentGeneration() != null ? StringEscapeUtils.escapeXml(NoOfEmployees.getById(corporateApplicantDetail.getEmploymentGeneration()).getValue()) : "-");
 							map.put("nameAsperGST", corporateApplicantDetail.getOrganisationName() != null ? StringEscapeUtils.escapeXml(corporateApplicantDetail.getOrganisationName()) : "-");
 						}
 					}catch (Exception e) {
