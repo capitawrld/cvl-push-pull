@@ -75,13 +75,14 @@ public class CamReportPdfDetailsController {
 	public ResponseEntity<LoansResponse> getPrimaryDataMap(@PathVariable(value = "applicationId") Long applicationId,@PathVariable(name = "productMappingId" ,required = false) Long productId,
 			@PathVariable(name ="proposalId" ,required = false) Long proposalId ,HttpServletRequest request)  {
 		
+		ReportRequest reportRequest = new ReportRequest();
 		if (CommonUtils.isObjectNullOrEmpty(applicationId)) {
 				logger.warn(CommonUtils.INVALID_DATA_OR_REQUESTED_DATA_NOT_FOUND, + applicationId);
 				return new ResponseEntity<LoansResponse>(new LoansResponse(CommonUtils.INVALID_DATA_OR_REQUESTED_DATA_NOT_FOUND, HttpStatus.BAD_REQUEST.value()), HttpStatus.OK);
 		}
 		try {
 			Map<String,Object> response = camReportPdfDetailsService.getCamReportPrimaryDetails(applicationId,productId,proposalId,false);
-			ReportRequest reportRequest = new ReportRequest();
+			
 			reportRequest.setParams(response);
 			reportRequest.setTemplate("CVLMUDRALOANPRIMARYCAM");
 			reportRequest.setType("CVLMUDRALOANPRIMARYCAM");
@@ -103,7 +104,7 @@ public class CamReportPdfDetailsController {
 		} catch (Exception e) {
 			logger.error(ERROR_WHILE_GETTING_MAP_DETAILS, e);
 			return new ResponseEntity<LoansResponse>(
-					new LoansResponse(CommonUtils.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR.value()),
+					new LoansResponse(CommonUtils.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR.value(), reportRequest),
 					HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
