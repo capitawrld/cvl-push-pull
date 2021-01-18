@@ -1552,7 +1552,7 @@ public class CorporatePrimaryViewServiceImpl implements CorporatePrimaryViewServ
 	    		corporatePrimaryViewResponse.setAccountName(bankStatementResponse.get("accountHolderName"));
 	    		corporatePrimaryViewResponse.setAccountNumber(bankStatementResponse.get("bankAccountNo"));
 	    		corporatePrimaryViewResponse.setIfsc(bankStatementResponse.get("ifscCode"));
-	    		corporatePrimaryViewResponse.setStatus(bankStatementResponse.get(1));
+	    		corporatePrimaryViewResponse.setStatus(1);
 	    		String year = bankStatementResponse.get("sinceYear") != null ? String.valueOf(bankStatementResponse.get("sinceYear")) : null;
 				String months = bankStatementResponse.get("sinceMonth") != null ? String.valueOf(bankStatementResponse.get("sinceMonth")) : null;
 				if (!CommonUtils.isObjectNullOrEmpty(year) || !CommonUtils.isObjectNullOrEmpty(months)) {
