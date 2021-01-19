@@ -1,4 +1,4 @@
-package com.opl.service.loans.domain.sidbi;
+package com.opl.service.loans.model.pushpull;
 
 import java.io.Serializable;
 
