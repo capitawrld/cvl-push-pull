@@ -135,4 +135,6 @@ public interface LoanRepository{
 	public Boolean isManualBs(Long bsId);
 
 	public int checkApplicationStageforMultiBank(Long applicationId);
+
+	public Long getUserTypeByEmail(String email);
 }
