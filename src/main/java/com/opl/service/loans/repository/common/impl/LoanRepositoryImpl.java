@@ -903,4 +903,17 @@ public class LoanRepositoryImpl implements LoanRepository {
 		return 0;
 	}
 	
+	public Long getUserTypeByEmail(String email) {
+		try {
+			BigInteger id = (BigInteger) entityManager.createNativeQuery("SELECT user_id FROM users.users WHERE email =:email")
+					.setParameter("email", email)
+					.getResultList()
+					.stream().findFirst().orElse(null);
+			return id != null ? id.longValue() : 0L;
+		} catch (Exception e) {
+			LOGGER.error(CommonUtils.EXCEPTION,e);
+		}
+		return 0L;
+	}
+	
 }

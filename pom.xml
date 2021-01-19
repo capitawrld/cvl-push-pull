@@ -8,8 +8,8 @@
 		<relativePath /> <!-- lookup parent from repository -->
 		<artifactId>spring-boot-starter-parent</artifactId>
 	</parent>
-	<groupId>com.opl.mudra.v4.loans</groupId>
-	<artifactId>service-loans-mudra</artifactId>
+	<groupId>com.opl.mudra.cvl.pushpull</groupId>
+	<artifactId>service-push-pull</artifactId>
 	<version>17.0.0</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
