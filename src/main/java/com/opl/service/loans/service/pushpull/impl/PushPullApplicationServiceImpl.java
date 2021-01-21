@@ -45,8 +45,8 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 			usersRequest.setMobile(pushPullRequest.getMobile());
 			usersRequest.setPan(pushPullRequest.getPan());
 			usersRequest.setGstin(pushPullRequest.getGstIn());
-			UserResponse userResponse = userClient.saveCvlPushPull(usersRequest);
-			return userResponse;
+			//UserResponse userResponse = userClient.saveCvlPushPull(usersRequest);
+			return null;
 		}catch(Exception e) {
 			logger.error("Error While saveUsersData: ", e);
 			return null;
