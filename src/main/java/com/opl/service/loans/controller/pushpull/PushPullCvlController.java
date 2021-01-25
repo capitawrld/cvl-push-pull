@@ -30,8 +30,7 @@ public class PushPullCvlController {
 
 	private static final Logger logger = LoggerFactory.getLogger(PushPullCvlController.class);
 
-	@Autowired
-	private LoanRepository loanRepository;
+	
 	
 	@Autowired
 	private PushPullApplicationService pushPullApplicationService;
@@ -39,16 +38,6 @@ public class PushPullCvlController {
 	@PostMapping(value = "/pushpull", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<LoansResponse> getPushPullData(@RequestBody PushPullRequest pushPullRequest, HttpServletRequest request) {
 		try {
-			if (!CommonUtils.isObjectNullOrEmpty(pushPullRequest)) {
-				Long userid = loanRepository.getUserTypeByEmail(pushPullRequest.getEmail());
-				if (!CommonUtils.isObjectNullOrEmpty(userid)) {
-					return new ResponseEntity<LoansResponse>(
-							new LoansResponse("Data already enrolled in system", HttpStatus.CONFLICT.value(), pushPullRequest), HttpStatus.CONFLICT);
-				}
-				
-				return new ResponseEntity<>(new LoansResponse(CommonUtils.INVALID_REQUEST, HttpStatus.BAD_REQUEST.value()), HttpStatus.OK);
-			}
-			
 			LoansResponse loansResponse = new LoansResponse();
 			loansResponse  = pushPullApplicationService.saveOrUpdate(pushPullRequest);
 			return new ResponseEntity<>(loansResponse, HttpStatus.OK);
