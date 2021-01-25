@@ -22,10 +22,11 @@ public class LoanRepositoryImpl implements LoanRepository {
 	@PersistenceContext
 	private EntityManager entityManager;
 
-	public Long getUserTypeByEmail(String email) {
+	public Long getUserTypeByEmail(String email, String mobile) {
 		try {
-			BigInteger id = (BigInteger) entityManager.createNativeQuery("SELECT user_id FROM users.users WHERE email =:email")
+			BigInteger id = (BigInteger) entityManager.createNativeQuery("SELECT user_id FROM users.users WHERE email =:email and mobile =:mobile ")
 					.setParameter("email", email)
+					.setParameter("mobile", mobile)
 					.getResultList()
 					.stream().findFirst().orElse(null);
 			return id != null ? id.longValue() : 0L;
