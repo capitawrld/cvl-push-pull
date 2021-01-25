@@ -1,6 +1,7 @@
 package com.opl.service.loans.service.pushpull.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -8,16 +9,22 @@ import javax.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import com.opl.mudra.api.gst.model.GstResponse;
 import com.opl.mudra.api.gst.model.yuva.request.GSTR1Request;
 import com.opl.mudra.api.loans.exception.LoansException;
 import com.opl.mudra.api.loans.model.LoansResponse;
 import com.opl.mudra.api.loans.utils.CommonUtils;
+import com.opl.mudra.api.notification.exception.NotificationException;
+import com.opl.mudra.api.notification.utils.NotificationAlias;
+import com.opl.mudra.api.notification.utils.NotificationMasterAlias;
 import com.opl.mudra.api.user.model.UserResponse;
 import com.opl.mudra.api.user.model.UsersRequest;
 import com.opl.mudra.client.gst.GstClient;
@@ -26,6 +33,7 @@ import com.opl.profile.api.model.CommonResponse;
 import com.opl.profile.api.model.LoanMappingRequest;
 import com.opl.profile.api.model.ProfileRequest;
 import com.opl.profile.client.ProfileClient;
+import com.opl.service.loans.config.FPAsyncComponent;
 import com.opl.service.loans.model.pushpull.PushPullRequest;
 import com.opl.service.loans.repository.common.LoanRepository;
 import com.opl.service.loans.service.pushpull.PushPullApplicationService;
@@ -49,6 +57,12 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 	@Autowired
 	private GstClient gstClient;
 		
+	@Value("${dfs.user.default.password}")
+	private String password;
+	
+	@Autowired
+	private FPAsyncComponent asyncComp;
+	
 	private Long fpUserType = 2L;
 	
 	private static final Logger logger = LoggerFactory.getLogger(PushPullApplicationServiceImpl.class.getName());
@@ -97,7 +111,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 			gstRequest.setPan(pushPullRequest.getPan());
 			//gstRequest.setApplicationId(connectResponse.getApplicationId());
 			gstRequest.setProfileId(profileId);
-			GstResponse createGstProfileMappingApplication = gstClient.createGstProfileMappingApplication(gstRequest);
+			//GstResponse createGstProfileMappingApplication = gstClient.createGstProfileMappingApplication(gstRequest);
 			
 			
 //			ProfileRequest request = new ProfileRequest();
@@ -109,12 +123,53 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 //			request.setCampaignType("sbi");
 //			com.opl.profile.api.model.CommonResponse profileLoanMappingResponse = profileClient.saveProfile(request);
 		
+			sendNotification(pushPullRequest, userResponse);
+			
+			//sentSMS(null ,pushPullRequest,userResponse);
+			
 			return userResponse;
 		}catch(Exception e) {
 			logger.error("Error While saveUsersData: ", e);
 			return null;
 		}
 	}
+
+	/*
+	 * private void sentSMS(Map<String, Object> mailParameters ,PushPullRequest
+	 * pushPullRequest, UserResponse userResponse) throws NotificationException {
+	 * String toMobile = null; if(pushPullRequest.getMobile() != null ) { toMobile =
+	 * pushPullRequest.getMobile(); mailParameters.put("url",
+	 * "www.psbloansin59minutes.com"); asyncComp.sendSMSNotification(toMobile
+	 * ,userResponse.getId().toString() ,mailParameters
+	 * ,NotificationAlias.SMS_WELCOME_CAPITAWORLD ,null , 16 ,25 ,
+	 * NotificationMasterAlias.EMAIL_FS_SIGNUP_COMPLETE.getMasterId()); } }
+	 */
+
+	private void sendNotification(PushPullRequest pushPullRequest, UserResponse userResponse) {
+		try {
+			if (!CommonUtils.isObjectNullOrEmpty(pushPullRequest)
+					&& !CommonUtils.isObjectNullOrEmpty(pushPullRequest.getEmail())
+					&& !CommonUtils.isObjectNullOrEmpty(userResponse)
+					&& !CommonUtils.isObjectNullOrEmpty(userResponse.getData())) {
+	
+				LinkedHashMap userMap = (LinkedHashMap) userResponse.getData();
+					Map<String, Object> mailParameters = new HashMap<>();{
+						mailParameters.put("email", pushPullRequest.getEmail());
+						mailParameters.put("password", password);
+						asyncComp.createNotificationForEmail(pushPullRequest.getEmail(),
+								userResponse.getId() != null ? userResponse.getId().toString() : "123", mailParameters,
+								NotificationAlias.CVL_WELCOME_EMAIL_FOR_USER, null, null, null, null, null,
+								NotificationMasterAlias.CVL_WELCOME_EMAIL_FOR_TATA_MOTERS.getMasterId());
+					}
+			logger.info("Mail Sent Successfully ");
+			
+		}
+		}catch(Exception e) {
+			logger.error("Error While Sending Mail Notification: ", e);
+			
+		}
+	}
+	
 
 	private CommonResponse createProfileData(Long id, UserResponse userResponse, PushPullRequest pushPullRequest) {
 		ProfileRequest profileRequest=new ProfileRequest();
