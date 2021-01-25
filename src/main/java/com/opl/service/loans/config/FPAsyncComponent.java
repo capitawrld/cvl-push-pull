@@ -102,7 +102,7 @@ public class FPAsyncComponent {
 	private Boolean mailToMakerChecker;
 
 	
-	private void sendSMSNotification(String userId, Map<String, Object> parameters, Long templateId,Long domainId,Integer productId,Long userOrgId,Long masterId,String... to)
+	public void sendSMSNotification(String userId, Map<String, Object> parameters, Long templateId,Long domainId,Integer productId,Long userOrgId,Long masterId,String... to)
 			throws NotificationException {
 		logger.info("Inside send SMS===>{}",Arrays.toString(to));
 		NotificationRequest req = new NotificationRequest();

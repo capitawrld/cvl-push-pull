@@ -24,6 +24,7 @@ import com.opl.mudra.api.loans.model.LoansResponse;
 import com.opl.mudra.api.loans.utils.CommonUtils;
 import com.opl.mudra.api.notification.exception.NotificationException;
 import com.opl.mudra.api.notification.utils.NotificationAlias;
+import com.opl.mudra.api.notification.utils.NotificationConstants;
 import com.opl.mudra.api.notification.utils.NotificationMasterAlias;
 import com.opl.mudra.api.user.model.UserResponse;
 import com.opl.mudra.api.user.model.UsersRequest;
@@ -111,7 +112,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 			gstRequest.setPan(pushPullRequest.getPan());
 			//gstRequest.setApplicationId(connectResponse.getApplicationId());
 			gstRequest.setProfileId(profileId);
-			//GstResponse createGstProfileMappingApplication = gstClient.createGstProfileMappingApplication(gstRequest);
+			GstResponse createGstProfileMappingApplication = gstClient.createGstProfileMappingApplication(gstRequest);
 			
 			
 //			ProfileRequest request = new ProfileRequest();
@@ -125,7 +126,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		
 			sendNotification(pushPullRequest, userResponse);
 			
-			//sentSMS(null ,pushPullRequest,userResponse);
+			sendSMSNotification(pushPullRequest,userResponse);
 			
 			return userResponse;
 		}catch(Exception e) {
@@ -158,8 +159,8 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 						mailParameters.put("password", password);
 						asyncComp.createNotificationForEmail(pushPullRequest.getEmail(),
 								userResponse.getId() != null ? userResponse.getId().toString() : "123", mailParameters,
-								NotificationAlias.CVL_WELCOME_EMAIL_FOR_USER, null, null, null, null, null,
-								NotificationMasterAlias.CVL_WELCOME_EMAIL_FOR_TATA_MOTERS.getMasterId());
+								NotificationAlias.DFS_WELCOME_EMAIL_FOR_DEALER, null, null, null, null, null,
+								NotificationMasterAlias.DFS_WELCOME_EMAIL_FOR_EXISITNG_USER_DEALER.getMasterId());
 					}
 			logger.info("Mail Sent Successfully ");
 			
@@ -201,6 +202,37 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		}
 		return profileResponse;
 
+	}
+	
+	
+	private void sendSMSNotification(PushPullRequest pushPullRequest, UserResponse userResponse) {
+		try {
+			if (!CommonUtils.isObjectNullOrEmpty(pushPullRequest)
+					&& !CommonUtils.isObjectNullOrEmpty(pushPullRequest.getEmail())
+					&& !CommonUtils.isObjectNullOrEmpty(userResponse)
+					&& !CommonUtils.isObjectNullOrEmpty(userResponse.getData())) {
+	
+				LinkedHashMap userMap = (LinkedHashMap) userResponse.getData();
+					Map<String, Object> mailParameters = new HashMap<>();{
+						mailParameters.put("email", pushPullRequest.getEmail());
+						mailParameters.put("password", password);
+						asyncComp.sendSMSNotification(
+								userResponse.getId() != null ? userResponse.getId().toString() : "123",
+								mailParameters,
+								NotificationAlias.DFS_WELCOME_EMAIL_FOR_DEALER,
+								NotificationConstants.NotificationProperty.DomainValue.MSME.getId(),
+								2,
+								16L,
+								NotificationMasterAlias.DFS_WELCOME_EMAIL_FOR_EXISITNG_USER_DEALER.getMasterId(),
+								pushPullRequest.getMobile());
+					}
+			logger.info("SMS Sent Successfully ");
+			
+		}
+		}catch(Exception e) {
+			logger.error("Error While Sending SMS Notification: ", e);
+			
+		}
 	}
 
 }
