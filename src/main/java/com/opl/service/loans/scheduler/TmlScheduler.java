@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.Consts;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
@@ -12,10 +13,12 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,12 +58,20 @@ public class TmlScheduler {
 			pushPullRequest.setClientId(93571l);
 			pushPullRequest.setOffset(0l);
 
-			List<NameValuePair> loginApiform = new ArrayList<>();
+			/*List<NameValuePair> loginApiform = new ArrayList<>();
 			loginApiform.add(new BasicNameValuePair("financierId", "1-7DSGIBS"));
 			loginApiform.add(new BasicNameValuePair("clientId", "93571"));
-			loginApiform.add(new BasicNameValuePair("offset", "0"));
+			loginApiform.add(new BasicNameValuePair("offset", "0"));*/
+			
+			JSONObject json = new JSONObject();
+			json.put("financier_id", "1-7DSGIBS");  
+			json.put("client_id", "93571");
+			json.put("offset", "0");
+			
+			StringEntity params = new StringEntity(json.toString());
 
-			UrlEncodedFormEntity transactionComplete = new UrlEncodedFormEntity(loginApiform, Consts.UTF_8);
+			//UrlEncodedFormEntity transactionComplete = new UrlEncodedFormEntity(loginApiform, Consts.UTF_8);
+			
 
 //			HttpPost httpPostStatement = new HttpPost(environment.getProperty(TML_URL));
 //			httpPostStatement.setEntity(transactionComplete);
@@ -75,7 +86,10 @@ public class TmlScheduler {
 			  
 			  try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 				    final HttpPost httpPost = new HttpPost(url);
-				    httpPost.setEntity(transactionComplete);
+				    httpPost.setEntity(params);
+				  //  httpPost.addHeader("auth_key", "U0Gs3xVPjmBmZuwjV4lbt4S");
+				    httpPost.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+				    httpPost.addHeader(HttpHeaders.AUTHORIZATION, "Bearer U0Gs3xVPjmBmZuwjV4lbt4S");
 				    try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
 				        StatusLine statusLine = response.getStatusLine();
 				        System.out.println(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
