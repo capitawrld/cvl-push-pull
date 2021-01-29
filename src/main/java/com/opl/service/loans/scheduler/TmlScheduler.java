@@ -1,16 +1,21 @@
 package com.opl.service.loans.scheduler;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.Consts;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.StatusLine;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +45,7 @@ public class TmlScheduler {
 	public void run() {
 		logger.info("Entry ScheduledTasks");
 		try {
-			 String urlDone=environment.getProperty(TML_URL);
+			 String url=environment.getProperty(TML_URL);
 
 			logger.info("Schedule Call................. ");
 
@@ -57,16 +62,27 @@ public class TmlScheduler {
 
 			UrlEncodedFormEntity transactionComplete = new UrlEncodedFormEntity(loginApiform, Consts.UTF_8);
 
-			HttpPost httpPostStatement = new HttpPost(environment.getProperty(TML_URL));
-			httpPostStatement.setEntity(transactionComplete);
+//			HttpPost httpPostStatement = new HttpPost(environment.getProperty(TML_URL));
+//			httpPostStatement.setEntity(transactionComplete);
 			
-			  try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-				  
-				  HttpResponse responseStatement = httpclient.execute(httpPostStatement);
-				  
-			  }catch (Exception e) {
-				// TODO: handle exception
-			}
+//			  try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+//				  
+//				  HttpResponse responseStatement = httpclient.execute(httpPostStatement);
+//				  
+//			  }catch (Exception e) {
+//				// TODO: handle exception
+//			}
+			  
+			  try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+				    final HttpPost httpPost = new HttpPost(url);
+				    httpPost.setEntity(transactionComplete);
+				    try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+				        StatusLine statusLine = response.getStatusLine();
+				        System.out.println(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+				        String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+				        System.out.println("Response body: " + responseBody);
+				    }
+				}
 			
 			
 
