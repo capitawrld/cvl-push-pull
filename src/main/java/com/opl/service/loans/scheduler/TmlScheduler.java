@@ -34,12 +34,13 @@ public class TmlScheduler {
 	@Autowired
 	private Environment environment;
 
-	private String urlDone = environment.getRequiredProperty(TML_URL);
+	//private String urlDone = environment.getRequiredProperty(TML_URL);
 
 	@Scheduled(fixedDelayString = "${cw.tmlPushPull.scheduler.timeout}")
 	public void run() {
 		logger.info("Entry ScheduledTasks");
 		try {
+			 String urlDone=environment.getProperty(TML_URL);
 
 			logger.info("Schedule Call................. ");
 
