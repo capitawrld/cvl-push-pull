@@ -30,6 +30,12 @@ public class PushPullRequest implements Serializable{
 	private Long businessTypeId;
 	
 	private String username;
+	
+	private String financierId;
+	
+	private Long clientId;
+	
+	private Long offset;
 
 	public String getUsername() {
 		return username;
@@ -67,6 +73,23 @@ public class PushPullRequest implements Serializable{
 	public void setMobile(String mobile) {
 		this.mobile = mobile;
 	}
-	
+	public String getFinancierId() {
+		return financierId;
+	}
+	public void setFinancierId(String financierId) {
+		this.financierId = financierId;
+	}
+	public Long getClientId() {
+		return clientId;
+	}
+	public void setClientId(Long clientId) {
+		this.clientId = clientId;
+	}
+	public Long getOffset() {
+		return offset;
+	}
+	public void setOffset(Long offset) {
+		this.offset = offset;
+	}
 	
 }
