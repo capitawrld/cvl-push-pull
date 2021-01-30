@@ -26,8 +26,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.opl.mudra.api.analyzer.model.finbit.UploadStatementResponse;
+import com.opl.mudra.api.common.MultipleJSONObjectHelper;
 import com.opl.mudra.api.loans.utils.CommonUtils;
 import com.opl.service.loans.model.pushpull.PushPullRequest;
+import com.opl.service.loans.model.pushpull.TmlRootRequest;
 import com.opl.service.loans.service.pushpull.PushPullApplicationService;
 
 @Component
@@ -42,13 +45,11 @@ public class TmlScheduler {
 	@Autowired
 	private Environment environment;
 
-	//private String urlDone = environment.getRequiredProperty(TML_URL);
-
 	@Scheduled(fixedDelayString = "${cw.tmlPushPull.scheduler.timeout}")
 	public void run() {
 		logger.info("Entry ScheduledTasks");
 		try {
-			 String url=environment.getProperty(TML_URL);
+			String url = environment.getProperty(TML_URL);
 
 			logger.info("Schedule Call................. ");
 
@@ -58,49 +59,38 @@ public class TmlScheduler {
 			pushPullRequest.setClientId(93571l);
 			pushPullRequest.setOffset(0l);
 
-			/*List<NameValuePair> loginApiform = new ArrayList<>();
-			loginApiform.add(new BasicNameValuePair("financierId", "1-7DSGIBS"));
-			loginApiform.add(new BasicNameValuePair("clientId", "93571"));
-			loginApiform.add(new BasicNameValuePair("offset", "0"));*/
-			
 			JSONObject json = new JSONObject();
-			json.put("financier_id", "1-7DSGIBS");  
+			json.put("financier_id", "1-7DSGIBS");
 			json.put("client_id", "93571");
 			json.put("offset", "0");
-			
+
 			StringEntity params = new StringEntity(json.toString());
-
-			//UrlEncodedFormEntity transactionComplete = new UrlEncodedFormEntity(loginApiform, Consts.UTF_8);
 			
-
-//			HttpPost httpPostStatement = new HttpPost(environment.getProperty(TML_URL));
-//			httpPostStatement.setEntity(transactionComplete);
-			
-//			  try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-//				  
-//				  HttpResponse responseStatement = httpclient.execute(httpPostStatement);
-//				  
-//			  }catch (Exception e) {
-//				// TODO: handle exception
-//			}
-			  
-			  try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-				    final HttpPost httpPost = new HttpPost(url);
-				    httpPost.setEntity(params);
-				  //  httpPost.addHeader("auth_key", "U0Gs3xVPjmBmZuwjV4lbt4S");
-				    httpPost.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-				    httpPost.addHeader(HttpHeaders.AUTHORIZATION, "Bearer U0Gs3xVPjmBmZuwjV4lbt4S");
-				    try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
-				        StatusLine statusLine = response.getStatusLine();
-				        System.out.println(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
-				        String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-				        System.out.println("Response body: " + responseBody);
-				    }
+			TmlRootRequest tmlRootRequest = null;
+			try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+				final HttpPost httpPost = new HttpPost(url);
+				httpPost.setEntity(params);
+				// httpPost.addHeader("auth_key", "U0Gs3xVPjmBmZuwjV4lbt4S");
+				httpPost.addHeader(HttpHeaders.CONTENT_TYPE, "application/json");
+				httpPost.addHeader(HttpHeaders.AUTHORIZATION, "Bearer U0Gs3xVPjmBmZuwjV4lbt4S");
+				try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
+					StatusLine statusLine = response.getStatusLine();
+					System.out.println(statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+					if(statusLine.getStatusCode() != 200) {
+					return;	
+					}
+					String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+					System.out.println("Response body: " + responseBody);
+					tmlRootRequest = MultipleJSONObjectHelper.getObjectFromString(responseBody,TmlRootRequest.class);
+					tmlRootRequest.setResponseBody(responseBody);
+					tmlRootRequest.setRequest(json);
+					System.out.println("Response body: copied");
 				}
-			
-			
 
-//			pushPullApplicationService.saveOrUpdate(pushPullRequest);
+			}
+
+			pushPullApplicationService.saveTataMotorsLoanDetails(tmlRootRequest);
+			pushPullApplicationService.saveTataMotorsReqResDetails(tmlRootRequest);
 
 			logger.info("Exit ScheduledTasks");
 		} catch (Exception e) {

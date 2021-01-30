@@ -2,27 +2,26 @@ package com.opl.service.loans.service.pushpull.impl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import com.opl.mudra.api.gst.model.GstResponse;
 import com.opl.mudra.api.gst.model.yuva.request.GSTR1Request;
 import com.opl.mudra.api.loans.exception.LoansException;
 import com.opl.mudra.api.loans.model.LoansResponse;
 import com.opl.mudra.api.loans.utils.CommonUtils;
-import com.opl.mudra.api.notification.exception.NotificationException;
 import com.opl.mudra.api.notification.utils.NotificationAlias;
 import com.opl.mudra.api.notification.utils.NotificationConstants;
 import com.opl.mudra.api.notification.utils.NotificationMasterAlias;
@@ -31,12 +30,17 @@ import com.opl.mudra.api.user.model.UsersRequest;
 import com.opl.mudra.client.gst.GstClient;
 import com.opl.mudra.client.users.UsersClient;
 import com.opl.profile.api.model.CommonResponse;
-import com.opl.profile.api.model.LoanMappingRequest;
 import com.opl.profile.api.model.ProfileRequest;
 import com.opl.profile.client.ProfileClient;
 import com.opl.service.loans.config.FPAsyncComponent;
+import com.opl.service.loans.domain.TataMotorsLoanDetails;
+import com.opl.service.loans.domain.TataMotorsReqResDetails;
 import com.opl.service.loans.model.pushpull.PushPullRequest;
+import com.opl.service.loans.model.pushpull.Result;
+import com.opl.service.loans.model.pushpull.TmlRootRequest;
 import com.opl.service.loans.repository.common.LoanRepository;
+import com.opl.service.loans.repository.common.TataMotorsLoanDetailsRepository;
+import com.opl.service.loans.repository.common.TataMotorsReqResDetailsRepository;
 import com.opl.service.loans.service.pushpull.PushPullApplicationService;
 
 @Service
@@ -54,6 +58,12 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 	
 	@Autowired
 	private LoanRepository loanRepository;
+	
+	@Autowired
+	private TataMotorsLoanDetailsRepository tataMotorsLoanDetailsRepository;
+	
+	@Autowired
+	private TataMotorsReqResDetailsRepository tataMotorsReqResDetailsRepository ;
 	
 	@Autowired
 	private GstClient gstClient;
@@ -233,6 +243,40 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 			logger.error("Error While Sending SMS Notification: ", e);
 			
 		}
+	}
+
+	@Override
+	public LoansResponse saveTataMotorsLoanDetails(TmlRootRequest tmlRootRequest) {
+		logger.info("tmlRootRequest request :{}",tmlRootRequest.toString());
+		
+		TataMotorsLoanDetails tataMotorsLoanDetails = null;
+		
+		for (Result result : tmlRootRequest.getResult()) {
+			
+			long mobileNumberExist = tataMotorsLoanDetailsRepository.countByMobileNo(result.getMobileNo());
+			
+			if(mobileNumberExist > 0) {
+				logger.info("Mobile Number is already Exist");
+			}else {
+				tataMotorsLoanDetails = new TataMotorsLoanDetails();
+				BeanUtils.copyProperties(result, tataMotorsLoanDetails);
+				tataMotorsLoanDetails.setOffset(tmlRootRequest.getOffset());
+				tataMotorsLoanDetailsRepository.save(tataMotorsLoanDetails);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public LoansResponse saveTataMotorsReqResDetails(TmlRootRequest tmlRootRequest) {
+		
+		TataMotorsReqResDetails reqResDetails = new TataMotorsReqResDetails();
+		reqResDetails.setResponse(tmlRootRequest.getResponseBody());
+		reqResDetails.setIsActive(true);
+		reqResDetails.setRequest(tmlRootRequest.getRequest().toString());
+		tataMotorsReqResDetailsRepository.save(reqResDetails);
+		
+		return null;
 	}
 
 }
