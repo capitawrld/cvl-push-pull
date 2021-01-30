@@ -261,6 +261,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 				tataMotorsLoanDetails = new TataMotorsLoanDetails();
 				BeanUtils.copyProperties(result, tataMotorsLoanDetails);
 				tataMotorsLoanDetails.setOffset(tmlRootRequest.getOffset());
+				tataMotorsLoanDetails.setIsActive(true);
 				tataMotorsLoanDetailsRepository.save(tataMotorsLoanDetails);
 			}
 		}
@@ -274,6 +275,8 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		reqResDetails.setResponse(tmlRootRequest.getResponseBody());
 		reqResDetails.setIsActive(true);
 		reqResDetails.setRequest(tmlRootRequest.getRequest().toString());
+		reqResDetails.setCreatedDate(new Date());
+		reqResDetails.setModifiedDate(new Date());
 		tataMotorsReqResDetailsRepository.save(reqResDetails);
 		
 		return null;
