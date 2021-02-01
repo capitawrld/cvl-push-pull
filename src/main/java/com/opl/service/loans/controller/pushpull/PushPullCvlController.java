@@ -12,10 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.opl.mudra.api.loans.model.LoansResponse;
 import com.opl.mudra.api.loans.utils.CommonUtils;
+import com.opl.profile.api.utils.CommonDocumentUtils;
 import com.opl.service.loans.model.pushpull.PushPullRequest;
 import com.opl.service.loans.repository.common.LoanRepository;
 import com.opl.service.loans.service.pushpull.PushPullApplicationService;
@@ -46,5 +48,27 @@ public class PushPullCvlController {
 			return new ResponseEntity<>(new LoansResponse(CommonUtils.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	@PostMapping(value = "/getDataBYEmail", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<LoansResponse> getDataBYEmail(HttpServletRequest request,@RequestParam(value = "clientId", required = false) Long clientId) {
+		try {
+			
+			Long userId = null;
+			if (!CommonUtils.isObjectNullOrEmpty(clientId)) {
+				userId = clientId;
+			} else {
+				userId = (Long) request.getAttribute(CommonUtils.USER_ID);
+			}	
+			LoansResponse loansResponse = new LoansResponse();
+			loansResponse.setData(pushPullApplicationService.getDataBYEmail(userId));  
+			return new ResponseEntity<>(loansResponse, HttpStatus.OK);
+		}catch (Exception e) {
+			logger.error(CommonUtils.EXCEPTION,e);
+			return new ResponseEntity<>(new LoansResponse(CommonUtils.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
 	
 }

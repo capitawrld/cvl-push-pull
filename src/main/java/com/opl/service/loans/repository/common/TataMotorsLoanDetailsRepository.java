@@ -8,6 +8,10 @@ import com.opl.service.loans.domain.TataMotorsLoanDetails;
 public interface TataMotorsLoanDetailsRepository extends JpaRepository<TataMotorsLoanDetails, Long>{
 	
 	
-	long countByMobileNo(String mobileNo);
+	public long countByMobileNo(String mobileNo);
+	
+	public TataMotorsLoanDetails  findByMobileNo(String mobileNo);
+	
+	
 
 }

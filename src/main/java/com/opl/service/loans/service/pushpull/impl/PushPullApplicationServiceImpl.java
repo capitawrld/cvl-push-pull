@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.opl.mudra.api.auth.model.UserRequest;
 import com.opl.mudra.api.gst.model.GstResponse;
 import com.opl.mudra.api.gst.model.yuva.request.GSTR1Request;
 import com.opl.mudra.api.loans.exception.LoansException;
@@ -31,6 +32,7 @@ import com.opl.mudra.client.gst.GstClient;
 import com.opl.mudra.client.users.UsersClient;
 import com.opl.profile.api.model.CommonResponse;
 import com.opl.profile.api.model.ProfileRequest;
+import com.opl.profile.api.utils.MultipleJSONObjectHelper;
 import com.opl.profile.client.ProfileClient;
 import com.opl.service.loans.config.FPAsyncComponent;
 import com.opl.service.loans.domain.TataMotorsLoanDetails;
@@ -280,6 +282,24 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		tataMotorsReqResDetailsRepository.save(reqResDetails);
 		
 		return null;
+	}
+
+	@Override
+	public TataMotorsLoanDetails getDataBYEmail(Long userId) {
+		// TODO Auto-generated method stub
+		try {
+		UserResponse userResponseForName = userClient.getUserBasicDetails(userId);
+		UsersRequest uResponse = MultipleJSONObjectHelper
+				.getObjectFromMap((Map<Object, Object>) userResponseForName.getData(), UserRequest.class);
+		TataMotorsLoanDetails details=tataMotorsLoanDetailsRepository.findByMobileNo(uResponse.getMobile());
+		return details;
+		
+		}
+		catch(Exception e)
+		{
+			logger.error("error while get user data by email");
+			return null;
+		}
 	}
 
 }
