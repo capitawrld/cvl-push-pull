@@ -1,5 +1,6 @@
 package com.opl.service.loans.service.pushpull.impl;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -32,6 +33,7 @@ import com.opl.mudra.client.gst.GstClient;
 import com.opl.mudra.client.users.UsersClient;
 import com.opl.profile.api.model.CommonResponse;
 import com.opl.profile.api.model.ProfileRequest;
+import com.opl.profile.api.utils.CommonUtility;
 import com.opl.profile.api.utils.MultipleJSONObjectHelper;
 import com.opl.profile.client.ProfileClient;
 import com.opl.service.loans.config.FPAsyncComponent;
@@ -72,6 +74,9 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		
 	@Value("${dfs.user.default.password}")
 	private String password;
+	
+	@Value("${tatmotors.user.default.url}")
+	private String tataMotorsUrl;
 	
 	@Autowired
 	private FPAsyncComponent asyncComp;
@@ -265,6 +270,27 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 				tataMotorsLoanDetails.setOffset(tmlRootRequest.getOffset());
 				tataMotorsLoanDetails.setIsActive(true);
 				tataMotorsLoanDetailsRepository.save(tataMotorsLoanDetails);
+				
+				tataMotorsLoanDetails = tataMotorsLoanDetailsRepository.findByMobileNo(result.getMobileNo());
+				try {
+					if (!CommonUtils.isObjectNullOrEmpty(result)) {
+						
+						Map<String, Object> mailParameters = new HashMap<>();
+						{
+							mailParameters.put("mobile", result.getMobileNo());
+							mailParameters.put("password", password);
+							mailParameters.put("url", tataMotorsUrl + CommonUtility.encode(result.getMobileNo()));
+							asyncComp.sendSMSNotification(tataMotorsLoanDetails.getId() != null ? tataMotorsLoanDetails.getId().toString() : "123", mailParameters, null, null, null, null,
+									NotificationMasterAlias.SMS_TO_TATA_MOTORS_BORROWER_FOR_SIGN_UP_URL.getMasterId(),
+									result.getMobileNo());
+						}
+						logger.info("SMS Sent Successfully ");
+
+					}
+				} catch (Exception e) {
+					logger.error("Error While Sending SMS Notification: ", e);
+
+				}
 			}
 		}
 		return null;
