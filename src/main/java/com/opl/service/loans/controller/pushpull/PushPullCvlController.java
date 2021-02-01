@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.opl.mudra.api.loans.model.LoansResponse;
 import com.opl.mudra.api.loans.utils.CommonUtils;
+import com.opl.mudra.api.user.model.UsersRequest;
 import com.opl.profile.api.utils.CommonDocumentUtils;
 import com.opl.service.loans.model.pushpull.PushPullRequest;
 import com.opl.service.loans.repository.common.LoanRepository;
@@ -68,6 +69,19 @@ public class PushPullCvlController {
 			return new ResponseEntity<>(new LoansResponse(CommonUtils.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
+	}
+	
+	
+	@PostMapping(value = "/createProfileForTmlUsers", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<LoansResponse> createProfileData(@RequestBody UsersRequest usersRequest, HttpServletRequest request) {
+		try {
+			LoansResponse loansResponse = new LoansResponse();
+			loansResponse  = pushPullApplicationService.createProfileForTmlUsers(usersRequest);
+			return new ResponseEntity<>(loansResponse, HttpStatus.OK);
+		}catch (Exception e) {
+			logger.error(CommonUtils.EXCEPTION,e);
+			return new ResponseEntity<>(new LoansResponse(CommonUtils.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	

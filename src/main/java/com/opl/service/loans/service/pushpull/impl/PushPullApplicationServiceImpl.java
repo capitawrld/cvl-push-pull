@@ -1,9 +1,9 @@
 package com.opl.service.loans.service.pushpull.impl;
 
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -326,6 +326,28 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 			logger.error("error while get user data by email");
 			return null;
 		}
+	}
+
+	@Override
+	public LoansResponse createProfileForTmlUsers(UsersRequest usersRequest) {
+		
+		PushPullRequest pushPullRequest = new PushPullRequest();
+		TataMotorsLoanDetails tataMotorsLoanDetails =tataMotorsLoanDetailsRepository.findByMobileNo(usersRequest.getMobile());
+		
+		UserResponse response = null;
+		if(tataMotorsLoanDetails != null) {
+			List<Object[]> userResponse = tataMotorsLoanDetailsRepository.getUserByMobileNo(usersRequest.getMobile());
+			Long id = null;
+			for (Object[] object : userResponse) {
+				 id = Long.parseLong(String.valueOf(object[0]));
+			}
+			response.setId(id);
+			pushPullRequest.setUsername(tataMotorsLoanDetails.getFirstName());
+			pushPullRequest.setPan(tataMotorsLoanDetails.getPanNoCompany());
+			createProfileData(id, response, pushPullRequest);
+			return new LoansResponse(CommonUtils.SUCCESS, HttpStatus.OK.value(), HttpStatus.OK);
+		}
+		return new LoansResponse("User is not registered TML", HttpStatus.OK.value(), "User is not registered TML");
 	}
 
 }
