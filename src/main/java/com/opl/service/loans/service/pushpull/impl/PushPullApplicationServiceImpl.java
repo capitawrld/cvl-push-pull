@@ -257,7 +257,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		logger.info("tmlRootRequest request :{}",tmlRootRequest.toString());
 		
 		TataMotorsLoanDetails tataMotorsLoanDetails = null;
-		
+		if(tmlRootRequest.getResult()!=null) {
 		for (Result result : tmlRootRequest.getResult()) {
 			
 			long mobileNumberExist = tataMotorsLoanDetailsRepository.countByMobileNo(result.getMobileNo());
@@ -293,6 +293,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 				}
 			}
 		}
+	}
 		return null;
 	}
 
