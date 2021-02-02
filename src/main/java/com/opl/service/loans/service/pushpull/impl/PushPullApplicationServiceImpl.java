@@ -335,14 +335,14 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		PushPullRequest pushPullRequest = new PushPullRequest();
 		TataMotorsLoanDetails tataMotorsLoanDetails =tataMotorsLoanDetailsRepository.findByMobileNo(usersRequest.getMobile());
 		
-		UserResponse response = null;
+		UserResponse response = new UserResponse();
 		if(tataMotorsLoanDetails != null) {
 			List<Object[]> userResponse = tataMotorsLoanDetailsRepository.getUserByMobileNo(usersRequest.getMobile());
 			Long id = null;
 			for (Object[] object : userResponse) {
-				 id = Long.parseLong(String.valueOf(object[0]));
+				id = Long.parseLong(String.valueOf(object[0]));
+				 response.setId(id);
 			}
-			response.setId(id);
 			pushPullRequest.setUsername(tataMotorsLoanDetails.getFirstName());
 			pushPullRequest.setPan(tataMotorsLoanDetails.getPanNoCompany());
 			createProfileData(id, response, pushPullRequest);

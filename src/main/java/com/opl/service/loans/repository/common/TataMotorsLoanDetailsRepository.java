@@ -16,7 +16,7 @@ public interface TataMotorsLoanDetailsRepository extends JpaRepository<TataMotor
 	
 	public TataMotorsLoanDetails  findByMobileNo(String mobileNo);
 	
-	@Query(value="SELECT * FROM users.users WHERE `mobile`=:mobileNo and is_active = true",nativeQuery = true)
+	@Query(value="SELECT * FROM users.users WHERE `mobile`=:mobileNo",nativeQuery = true)
 	public List<Object[]>  getUserByMobileNo(@Param("mobileNo") String mobileNo);
 	
 	@Query(value="SELECT offset FROM tata_motors_loan_details ORDER BY id DESC LIMIT 1",nativeQuery = true)
