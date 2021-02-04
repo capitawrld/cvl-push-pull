@@ -52,17 +52,18 @@ public class PushPullCvlController {
 	
 	
 	@PostMapping(value = "/getDataBYEmail", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<LoansResponse> getDataBYEmail(HttpServletRequest request,@RequestParam(value = "clientId", required = false) Long clientId) {
+	public ResponseEntity<LoansResponse> getDataBYEmail(@RequestBody UsersRequest usersRequest,HttpServletRequest request,@RequestParam(value = "clientId", required = false) Long clientId) {
 		try {
 			
-			Long userId = null;
-			if (!CommonUtils.isObjectNullOrEmpty(clientId)) {
-				userId = clientId;
-			} else {
-				userId = (Long) request.getAttribute(CommonUtils.USER_ID);
-			}	
+			Long userId = usersRequest.getUserId();
+//			if (!CommonUtils.isObjectNullOrEmpty(clientId)) {
+//				userId = clientId;
+//			} else {
+//				userId = (Long) request.getAttribute(CommonUtils.USER_ID);
+//			}	
 			LoansResponse loansResponse = new LoansResponse();
-			loansResponse.setData(pushPullApplicationService.getDataBYEmail(userId));  
+			loansResponse.setData(pushPullApplicationService.getDataBYEmail(userId));
+			loansResponse.setStatus(HttpStatus.OK.value());
 			return new ResponseEntity<>(loansResponse, HttpStatus.OK);
 		}catch (Exception e) {
 			logger.error(CommonUtils.EXCEPTION,e);
