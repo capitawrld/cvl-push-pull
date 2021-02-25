@@ -89,8 +89,10 @@ public class TmlScheduler {
 
 			}
 
+			Long id=pushPullApplicationService.saveTataMotorsReqResDetails(tmlRootRequest);
+			tmlRootRequest.setId(id);
 			pushPullApplicationService.saveTataMotorsLoanDetails(tmlRootRequest);
-			pushPullApplicationService.saveTataMotorsReqResDetails(tmlRootRequest);
+			
 
 			logger.info("Exit ScheduledTasks");
 		} catch (Exception e) {

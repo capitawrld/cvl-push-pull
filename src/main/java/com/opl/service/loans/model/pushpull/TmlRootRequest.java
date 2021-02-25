@@ -29,6 +29,8 @@ public class TmlRootRequest {
 	}
 
 	List<Result> result;
+	
+	public Long id;
 
 	@JsonProperty("total_records")
 	public int getTotal_records() {
@@ -60,7 +62,16 @@ public class TmlRootRequest {
 	public void setRequest(JSONObject request) {
 		this.request = request;
 	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 	
+
 	
 	
 

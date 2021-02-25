@@ -220,6 +220,9 @@ public class TataMotorsLoanDetails implements Serializable {
 	
 	@Column(name = "offset")
 	private String offset;
+	
+	@Column(name = "req_id")
+	private Long reqId;
 
 	public Long getId() {
 		return id;
@@ -748,5 +751,16 @@ public class TataMotorsLoanDetails implements Serializable {
 	public void setOffset(String offset) {
 		this.offset = offset;
 	}
+
+	public Long getReqId() {
+		return reqId;
+	}
+
+	public void setReqId(Long reqId) {
+		this.reqId = reqId;
+	}
+
+	
+	
 	
 }
