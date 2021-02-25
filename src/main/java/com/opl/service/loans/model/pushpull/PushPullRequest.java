@@ -36,6 +36,10 @@ public class PushPullRequest implements Serializable{
 	private Long clientId;
 	
 	private Long offset;
+	
+	private Integer gstTypeId;
+	
+	private Long id;
 
 	public String getUsername() {
 		return username;
@@ -90,6 +94,18 @@ public class PushPullRequest implements Serializable{
 	}
 	public void setOffset(Long offset) {
 		this.offset = offset;
+	}
+	public Integer getGstTypeId() {
+		return gstTypeId;
+	}
+	public void setGstTypeId(Integer gstTypeId) {
+		this.gstTypeId = gstTypeId;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 }

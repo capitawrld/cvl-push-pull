@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.opl.mudra.api.auth.model.UserRequest;
+import com.opl.mudra.api.gst.exception.GstException;
 import com.opl.mudra.api.gst.model.GstResponse;
 import com.opl.mudra.api.gst.model.yuva.request.GSTR1Request;
 import com.opl.mudra.api.loans.exception.LoansException;
@@ -85,7 +86,9 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 	
 	private static final Logger logger = LoggerFactory.getLogger(PushPullApplicationServiceImpl.class.getName());
 	private static final String PROFILE_EXISTS = "Invalid request, Profile with same pan already exists!";
-
+	private static final Integer REGULAR = 1;
+	private static final Integer COMPOSITE = 2;
+	private static final Integer GST_NOT_APPLICABLE = 3;
 
 	@Override
 	public LoansResponse saveOrUpdate(PushPullRequest pushPullRequest) throws LoansException {
@@ -201,7 +204,40 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		profileRequest.setPanNo(pushPullRequest.getPan());
 		profileRequest.setTypeId(1);
 		profileRequest.setUserId(userResponse.getId());
-		profileRequest.setGstTypeId(3);
+		profileRequest.setGstTypeId(pushPullRequest.getGstTypeId() == null ? null : pushPullRequest.getGstTypeId());
+		
+		com.opl.profile.api.model.CommonResponse profileResponse = profileClient.createProfile(profileRequest);
+		if(!CommonUtils.isObjectNullOrEmpty(profileResponse) && 
+				profileResponse.getStatus().equals(HttpStatus.BAD_REQUEST.value()) && 
+				profileResponse.getMessage().equalsIgnoreCase(PROFILE_EXISTS)) {
+			com.opl.profile.api.model.CommonResponse profileIdResponse = profileClient.getProfileIdByUserIdAndPanNo(profileRequest);
+			if(!CommonUtils.isObjectNullOrEmpty(profileIdResponse) && 
+					profileIdResponse.getStatus().equals(HttpStatus.OK.value()) &&
+					!CommonUtils.isObjectNullOrEmpty(profileResponse.getData())) {
+				Long profileId = Long.parseLong(profileResponse.getData().toString());
+				profileResponse.setData(profileId);
+			}else {
+				return null;
+			}
+		}
+		return profileResponse;
+
+	}
+	
+	private CommonResponse saveProfileData(Long id, UserResponse userResponse, PushPullRequest pushPullRequest) {
+		ProfileRequest profileRequest=new ProfileRequest();
+		profileRequest.setId(pushPullRequest.getId() == null ? null : pushPullRequest.getId());
+		profileRequest.setName(pushPullRequest.getUsername());
+		profileRequest.setCampaignCode("sbi");
+		profileRequest.setCreatedBy(id);
+		profileRequest.setCreatedDate(new Date());
+		profileRequest.setModifiedBy(id);
+		profileRequest.setModifiedDate(new Date());
+		profileRequest.setIsActive(true);
+		profileRequest.setPanNo(pushPullRequest.getPan());
+		profileRequest.setTypeId(1);
+		profileRequest.setUserId(userResponse.getId());
+		profileRequest.setGstTypeId(pushPullRequest.getGstTypeId() == null ? null : pushPullRequest.getGstTypeId());
 		
 		com.opl.profile.api.model.CommonResponse profileResponse = profileClient.saveProfile(profileRequest);
 		if(!CommonUtils.isObjectNullOrEmpty(profileResponse) && 
@@ -317,14 +353,14 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		// TODO Auto-generated method stub
 		try {
 		UserResponse userResponseForName = userClient.getUserBasicDetails(userId);
-		UsersRequest uResponse = MultipleJSONObjectHelper
-				.getObjectFromMap((Map<Object, Object>) userResponseForName.getData(), UserRequest.class);
+		UsersRequest uResponse = MultipleJSONObjectHelper.getObjectFromMap((Map<Object, Object>) userResponseForName.getData(), com.opl.mudra.api.user.model.UsersRequest.class);
 		TataMotorsLoanDetails details=tataMotorsLoanDetailsRepository.findByMobileNo(uResponse.getMobile());
 		return details;
 		
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			logger.error("error while get user data by email");
 			return null;
 		}
@@ -346,7 +382,38 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 			}
 			pushPullRequest.setUsername(tataMotorsLoanDetails.getFirstName());
 			pushPullRequest.setPan(tataMotorsLoanDetails.getPanNoCompany());
-			createProfileData(id, response, pushPullRequest);
+			com.opl.profile.api.model.CommonResponse profileResponse = createProfileData(id, response, pushPullRequest);
+			if(CommonUtils.isObjectNullOrEmpty(profileResponse) || (!CommonUtils.isObjectNullOrEmpty(profileResponse) && CommonUtils.isObjectNullOrEmpty(profileResponse.getData()))) {
+				return null;
+			}
+			
+			Long profileId = Long.parseLong(profileResponse.getData().toString());
+			
+			GSTR1Request gstRequest = new GSTR1Request();
+			gstRequest.setUserId(id);
+			gstRequest.setPan(pushPullRequest.getPan());
+			//gstRequest.setApplicationId(connectResponse.getApplicationId());
+			gstRequest.setProfileId(profileId);
+			try {
+				GstResponse createGstProfileMappingApplication = gstClient.createGstProfileMappingApplication(gstRequest);
+				logger.error("get gst data");
+				 if (createGstProfileMappingApplication.getStatusCd().equals("914")) {
+			          pushPullRequest.setGstTypeId(GST_NOT_APPLICABLE);
+			        } else if (createGstProfileMappingApplication.getStatusCd().equals("907")) {
+			        	pushPullRequest.setGstTypeId(COMPOSITE);
+			        } else {
+			        	pushPullRequest.setGstTypeId(REGULAR);
+			        }
+			} catch (GstException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			pushPullRequest.setId(profileId);
+			com.opl.profile.api.model.CommonResponse saveProfileResponse = saveProfileData(id, response, pushPullRequest);
+			if(CommonUtils.isObjectNullOrEmpty(saveProfileResponse) || (!CommonUtils.isObjectNullOrEmpty(saveProfileResponse) && CommonUtils.isObjectNullOrEmpty(saveProfileResponse.getData()))) {
+				return null;
+			}
+			
 			return new LoansResponse(CommonUtils.SUCCESS, HttpStatus.OK.value(), HttpStatus.OK);
 		}
 		return new LoansResponse("User is not registered TML", HttpStatus.OK.value(), "User is not registered TML");
