@@ -269,6 +269,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 				BeanUtils.copyProperties(result, tataMotorsLoanDetails);
 				tataMotorsLoanDetails.setOffset(tmlRootRequest.getOffset());
 				tataMotorsLoanDetails.setIsActive(true);
+				tataMotorsLoanDetails.setReqId(tmlRootRequest.getId());
 				tataMotorsLoanDetailsRepository.save(tataMotorsLoanDetails);
 				
 				tataMotorsLoanDetails = tataMotorsLoanDetailsRepository.findByMobileNo(result.getMobileNo());
@@ -298,7 +299,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 	}
 
 	@Override
-	public LoansResponse saveTataMotorsReqResDetails(TmlRootRequest tmlRootRequest) {
+	public Long saveTataMotorsReqResDetails(TmlRootRequest tmlRootRequest) {
 		
 		TataMotorsReqResDetails reqResDetails = new TataMotorsReqResDetails();
 		reqResDetails.setResponse(tmlRootRequest.getResponseBody());
@@ -306,9 +307,9 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		reqResDetails.setRequest(tmlRootRequest.getRequest().toString());
 		reqResDetails.setCreatedDate(new Date());
 		reqResDetails.setModifiedDate(new Date());
-		tataMotorsReqResDetailsRepository.save(reqResDetails);
+		TataMotorsReqResDetails motorsReqResDetails=tataMotorsReqResDetailsRepository.save(reqResDetails);
 		
-		return null;
+		return motorsReqResDetails.getId();
 	}
 
 	@Override
