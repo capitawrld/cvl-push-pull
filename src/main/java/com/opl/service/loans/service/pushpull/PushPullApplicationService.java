@@ -13,7 +13,7 @@ public interface PushPullApplicationService {
 	
 	public LoansResponse saveTataMotorsLoanDetails(TmlRootRequest tmlRootRequest);
 	
-	public LoansResponse saveTataMotorsReqResDetails(TmlRootRequest tmlRootRequest);
+	public Long saveTataMotorsReqResDetails(TmlRootRequest tmlRootRequest);
 
 	public TataMotorsLoanDetails getDataBYEmail(Long userId);
 
