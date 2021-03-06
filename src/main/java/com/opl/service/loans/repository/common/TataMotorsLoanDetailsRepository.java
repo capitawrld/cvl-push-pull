@@ -23,6 +23,8 @@ public interface TataMotorsLoanDetailsRepository extends JpaRepository<TataMotor
 	public String  getLastOffset();
 
 	public TataMotorsLoanDetails findTopByMobileNo(String string);
+
+	public TataMotorsLoanDetails findFirstByMobileNo(String string);
 	
 	
 

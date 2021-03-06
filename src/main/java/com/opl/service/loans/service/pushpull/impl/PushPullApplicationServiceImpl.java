@@ -296,7 +296,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		if(tmlRootRequest.getResult()!=null) {
 		for (Result result : tmlRootRequest.getResult()) {
 			
-			long mobileNumberExist = tataMotorsLoanDetailsRepository.countByMobileNo(result.getMobileNo());
+			long mobileNumberExist = tataMotorsLoanDetailsRepository.countByMobileNo("8866581204");
 			
 			if(mobileNumberExist > 0) {
 				logger.info("Mobile Number is already Exist");
@@ -309,7 +309,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 				tataMotorsLoanDetails.setReqId(tmlRootRequest.getId());
 				tataMotorsLoanDetailsRepository.save(tataMotorsLoanDetails);
 				
-				tataMotorsLoanDetails = tataMotorsLoanDetailsRepository.findTopByMobileNo("8866581204");
+				tataMotorsLoanDetails = tataMotorsLoanDetailsRepository.findFirstByMobileNo("8866581204");
 				try {
 					if (!CommonUtils.isObjectNullOrEmpty(result)) {
 						
