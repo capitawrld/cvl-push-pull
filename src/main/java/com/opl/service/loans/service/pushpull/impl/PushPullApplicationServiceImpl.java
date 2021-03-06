@@ -309,7 +309,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 				tataMotorsLoanDetails.setReqId(tmlRootRequest.getId());
 				tataMotorsLoanDetailsRepository.save(tataMotorsLoanDetails);
 				
-				tataMotorsLoanDetails = tataMotorsLoanDetailsRepository.findByMobileNo("8866581204");
+				tataMotorsLoanDetails = tataMotorsLoanDetailsRepository.findTopByMobileNo("8866581204");
 				try {
 					if (!CommonUtils.isObjectNullOrEmpty(result)) {
 						

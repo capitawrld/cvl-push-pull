@@ -21,6 +21,8 @@ public interface TataMotorsLoanDetailsRepository extends JpaRepository<TataMotor
 	
 	@Query(value="SELECT offset FROM tata_motors_loan_details ORDER BY id DESC LIMIT 1",nativeQuery = true)
 	public String  getLastOffset();
+
+	public TataMotorsLoanDetails findTopByMobileNo(String string);
 	
 	
 
