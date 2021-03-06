@@ -161,6 +161,7 @@ public class FPAsyncComponent {
 	
 	private void sendEmail(NotificationRequest notificationRequest) throws NotificationException {
 		NotificationResponse send = notificationClient.send(notificationRequest);
+		System.out.println("notificationClient -----" + notificationClient);
 		logger.info("Notification Sent status :{}",send.getResponse_code_message());
 	}
 

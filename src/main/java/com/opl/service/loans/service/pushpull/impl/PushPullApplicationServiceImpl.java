@@ -309,7 +309,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 				tataMotorsLoanDetails.setReqId(tmlRootRequest.getId());
 				tataMotorsLoanDetailsRepository.save(tataMotorsLoanDetails);
 				
-				tataMotorsLoanDetails = tataMotorsLoanDetailsRepository.findByMobileNo(result.getMobileNo());
+				tataMotorsLoanDetails = tataMotorsLoanDetailsRepository.findByMobileNo("8866581204");
 				try {
 					if (!CommonUtils.isObjectNullOrEmpty(result)) {
 						
@@ -317,13 +317,15 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 						{
 							mailParameters.put("mobile", "8866581204");
 							mailParameters.put("password", password);
-							mailParameters.put("url", tataMotorsUrl + CommonUtility.encode(result.getMobileNo()));
-							asyncComp.sendSMSNotification(tataMotorsLoanDetails.getId() != null ? tataMotorsLoanDetails.getId().toString() : "123", mailParameters, null, null, null, null,
+							mailParameters.put("url", tataMotorsUrl + CommonUtility.encode("8866581204"));
+							asyncComp.sendSMSNotification(tataMotorsLoanDetails != null ? (tataMotorsLoanDetails.getId() != null ? tataMotorsLoanDetails.getId().toString() : "123") : "123", mailParameters, null, null, null, null,
 									NotificationMasterAlias.SMS_TO_TATA_MOTORS_BORROWER_FOR_SIGN_UP_URL.getMasterId(),
 									"8866581204");
 						}
 						logger.info("SMS Sent Successfully ");
 
+					} else {
+						logger.info("Mobile Not Found ");
 					}
 				} catch (Exception e) {
 					logger.error("Error While Sending SMS Notification: ", e);
