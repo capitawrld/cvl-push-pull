@@ -302,7 +302,8 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 				logger.info("Mobile Number is already Exist");
 			}else {
 				tataMotorsLoanDetails = new TataMotorsLoanDetails();
-				BeanUtils.copyProperties(result, tataMotorsLoanDetails);
+				BeanUtils.copyProperties(result, tataMotorsLoanDetails,"mobileNo");
+				tataMotorsLoanDetails.setMobileNo("8866581204");
 				tataMotorsLoanDetails.setOffset(tmlRootRequest.getOffset());
 				tataMotorsLoanDetails.setIsActive(true);
 				tataMotorsLoanDetails.setReqId(tmlRootRequest.getId());
@@ -314,12 +315,12 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 						
 						Map<String, Object> mailParameters = new HashMap<>();
 						{
-							mailParameters.put("mobile", result.getMobileNo());
+							mailParameters.put("mobile", "8866581204");
 							mailParameters.put("password", password);
 							mailParameters.put("url", tataMotorsUrl + CommonUtility.encode(result.getMobileNo()));
 							asyncComp.sendSMSNotification(tataMotorsLoanDetails.getId() != null ? tataMotorsLoanDetails.getId().toString() : "123", mailParameters, null, null, null, null,
 									NotificationMasterAlias.SMS_TO_TATA_MOTORS_BORROWER_FOR_SIGN_UP_URL.getMasterId(),
-									result.getMobileNo());
+									"8866581204");
 						}
 						logger.info("SMS Sent Successfully ");
 
