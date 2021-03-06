@@ -80,7 +80,7 @@ public class TmlScheduler {
 					return;	
 					}
 					String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-					System.out.println("Response body: " + responseBody);
+//					System.out.println("Response body: " + responseBody);
 					tmlRootRequest = MultipleJSONObjectHelper.getObjectFromString(responseBody,TmlRootRequest.class);
 					tmlRootRequest.setResponseBody(responseBody);
 					tmlRootRequest.setRequest(json);
