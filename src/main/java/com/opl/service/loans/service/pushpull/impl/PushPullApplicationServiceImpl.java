@@ -296,31 +296,30 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		if(tmlRootRequest.getResult()!=null) {
 		for (Result result : tmlRootRequest.getResult()) {
 			
-			long mobileNumberExist = tataMotorsLoanDetailsRepository.countByMobileNo("8866581204");
+			long mobileNumberExist = tataMotorsLoanDetailsRepository.countByMobileNo(result.getMobileNo());
 			
 			if(mobileNumberExist > 0) {
 				logger.info("Mobile Number is already Exist");
 			}else {
 				tataMotorsLoanDetails = new TataMotorsLoanDetails();
-				BeanUtils.copyProperties(result, tataMotorsLoanDetails,"mobileNo");
-				tataMotorsLoanDetails.setMobileNo("8866581204");
+				BeanUtils.copyProperties(result, tataMotorsLoanDetails);
+//				tataMotorsLoanDetails.setMobileNo("8866581204");
 				tataMotorsLoanDetails.setOffset(tmlRootRequest.getOffset());
 				tataMotorsLoanDetails.setIsActive(true);
 				tataMotorsLoanDetails.setReqId(tmlRootRequest.getId());
 				tataMotorsLoanDetailsRepository.save(tataMotorsLoanDetails);
 				
-				tataMotorsLoanDetails = tataMotorsLoanDetailsRepository.findFirstByMobileNo("8866581204");
+				tataMotorsLoanDetails = tataMotorsLoanDetailsRepository.findFirstByMobileNo(result.getMobileNo());
 				try {
 					if (!CommonUtils.isObjectNullOrEmpty(result)) {
 						
 						Map<String, Object> mailParameters = new HashMap<>();
 						{
-							mailParameters.put("mobile", "8866581204");
+							mailParameters.put("mobile", result.getMobileNo());
 							mailParameters.put("password", password);
-							mailParameters.put("url", tataMotorsUrl + CommonUtility.encode("8866581204"));
+							mailParameters.put("url", tataMotorsUrl + CommonUtility.encode(result.getMobileNo()));
 							asyncComp.sendSMSNotification(tataMotorsLoanDetails != null ? (tataMotorsLoanDetails.getId() != null ? tataMotorsLoanDetails.getId().toString() : "123") : "123", mailParameters, null, null, null, null,
-									NotificationMasterAlias.SMS_TO_TATA_MOTORS_BORROWER_FOR_SIGN_UP_URL.getMasterId(),
-									"8866581204");
+									NotificationMasterAlias.SMS_TO_TATA_MOTORS_BORROWER_FOR_SIGN_UP_URL.getMasterId(),result.getMobileNo());
 						}
 						logger.info("SMS Sent Successfully ");
 
