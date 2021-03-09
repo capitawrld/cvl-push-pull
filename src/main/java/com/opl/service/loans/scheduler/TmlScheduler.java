@@ -62,7 +62,7 @@ public class TmlScheduler {
 			json.put("financier_id", "1-7DSGIBS");
 			json.put("client_id", "93571");
 			json.put("offset", CommonUtils.isObjectNullOrEmpty(offset)?"0":offset+1);
-			//json.put("offset", "0");
+//			json.put("offset", "0");
 
 			StringEntity params = new StringEntity(json.toString());
 			
@@ -80,7 +80,7 @@ public class TmlScheduler {
 					return;	
 					}
 					String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-//					System.out.println("Response body: " + responseBody);
+					System.out.println("Response body: " + responseBody);
 					tmlRootRequest = MultipleJSONObjectHelper.getObjectFromString(responseBody,TmlRootRequest.class);
 					tmlRootRequest.setResponseBody(responseBody);
 					tmlRootRequest.setRequest(json);
