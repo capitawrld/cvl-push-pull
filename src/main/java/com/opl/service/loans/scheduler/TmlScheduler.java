@@ -61,7 +61,7 @@ public class TmlScheduler {
 			JSONObject json = new JSONObject();
 			json.put("financier_id", "1-7DSGIBS");
 			json.put("client_id", "93571");
-			json.put("offset", CommonUtils.isObjectNullOrEmpty(offset)?"0":offset+1);
+			json.put("offset", CommonUtils.isObjectNullOrEmpty(offset)?"0":Integer.parseInt(offset)+1);
 //			json.put("offset", "0");
 
 			StringEntity params = new StringEntity(json.toString());
