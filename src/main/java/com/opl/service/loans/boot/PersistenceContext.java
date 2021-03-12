@@ -56,9 +56,9 @@ public class PersistenceContext {
 		dataSource.setUsername(DataSourceProvider.getUserName());
 		dataSource.setPassword(DataSourceProvider.getPassword());
 		
-//		dataSource.setJdbcUrl(environment.getRequiredProperty(PROPERTY_NAME_DATABASE_URL));
-//		dataSource.setUsername(environment.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
-//		dataSource.setPassword(environment.getRequiredProperty(PROPERTY_NAME_DATABASE_POSSWARD));
+		//dataSource.setJdbcUrl(environment.getRequiredProperty(PROPERTY_NAME_DATABASE_URL));
+		//dataSource.setUsername(environment.getRequiredProperty(PROPERTY_NAME_DATABASE_USERNAME));
+		//dataSource.setPassword(environment.getRequiredProperty(PROPERTY_NAME_DATABASE_POSSWARD));
 		
 		dataSource.setConnectionTestQuery("SELECT 1");
 		dataSource
