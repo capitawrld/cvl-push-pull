@@ -30,6 +30,8 @@ public class TmlScheduler {
 
 	private static final Logger logger = LoggerFactory.getLogger(TmlScheduler.class.getName());
 	protected static final String TML_URL = "cw.tmlPushPull.scheduler.url";
+	protected static final String FINANCIERID = "cw.tmlPushPull.scheduler.financierid";
+	protected static final String CLIENTID = "cw.tmlPushPull.scheduler.clientid";
 
 	@Autowired
 	private PushPullApplicationService pushPullApplicationService;
@@ -45,22 +47,24 @@ public class TmlScheduler {
 		logger.info("Entry ScheduledTasks");
 		try {
 			String url = environment.getProperty(TML_URL);
+			String financier_id = environment.getProperty(FINANCIERID);
+			String client_id = environment.getProperty(CLIENTID);
 
 			logger.info("Schedule Call................. ");
 
-			PushPullRequest pushPullRequest = new PushPullRequest();
-
-			pushPullRequest.setFinancierId("1-7DSGIBS");
-			pushPullRequest.setClientId(93571l);
-			pushPullRequest.setOffset(0l);
+//			PushPullRequest pushPullRequest = new PushPullRequest();
+//
+//			pushPullRequest.setFinancierId(FINANCIERID);
+//			pushPullRequest.setClientId(93571l);
+//			pushPullRequest.setOffset(0l);
 
 			
 			//get last offset of tml data
 			String offset=tataMotorsLoanDetailsRepository.getLastOffset();
-			
+
 			JSONObject json = new JSONObject();
-			json.put("financier_id", "1-7DSGIBS");
-			json.put("client_id", "93571");
+			json.put("financier_id", financier_id);
+			json.put("client_id", client_id);
 			json.put("offset", CommonUtils.isObjectNullOrEmpty(offset)?"0":Integer.parseInt(offset)+1);
 //			json.put("offset", "0");
 
