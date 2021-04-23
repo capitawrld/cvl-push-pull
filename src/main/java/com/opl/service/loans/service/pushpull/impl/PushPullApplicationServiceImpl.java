@@ -356,7 +356,7 @@ public class PushPullApplicationServiceImpl implements PushPullApplicationServic
 		try {
 		UserResponse userResponseForName = userClient.getUserBasicDetails(userId);
 		UsersRequest uResponse = MultipleJSONObjectHelper.getObjectFromMap((Map<Object, Object>) userResponseForName.getData(), com.opl.mudra.api.user.model.UsersRequest.class);
-		TataMotorsLoanDetails details=tataMotorsLoanDetailsRepository.findByMobileNo(uResponse.getMobile());
+		TataMotorsLoanDetails details=tataMotorsLoanDetailsRepository.findByMobileNo("5656");
 		return details;
 		
 		}
