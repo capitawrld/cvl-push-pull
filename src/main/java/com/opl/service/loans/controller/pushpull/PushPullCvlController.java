@@ -67,7 +67,7 @@ public class PushPullCvlController {
 			return new ResponseEntity<>(loansResponse, HttpStatus.OK);
 		}catch (Exception e) {
 			logger.error(CommonUtils.EXCEPTION,e);
-			return new ResponseEntity<>(new LoansResponse(CommonUtils.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR.value()), HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(new LoansResponse(CommonUtils.SOMETHING_WENT_WRONG, HttpStatus.OK.value()), HttpStatus.OK);
 		}
 		
 	}
